@@ -1,0 +1,13 @@
+{
+    "configurations": [
+        {
+            "type": "java",
+            "name": "CodeLens (Launch) - TruncatedTarantula",
+            "request": "launch",
+            "mainClass": "me.mtk.truncatedtarantula.TruncatedTarantula",
+            "projectName": "truncated-tarantula_1f53d90f",
+            "cwd": "${workspaceFolder}/me/mtk/truncatedtarantula",
+            "args": "program.in"
+        }
+    ]
+}
