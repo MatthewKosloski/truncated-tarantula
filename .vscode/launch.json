@@ -7,7 +7,7 @@
             "mainClass": "me.mtk.truncatedtarantula.TruncatedTarantula",
             "projectName": "truncated-tarantula_1f53d90f",
             "cwd": "${workspaceFolder}/me/mtk/truncatedtarantula",
-            "args": "program.in"
+            "args": "../../../program.torrey"
         }
     ]
 }
