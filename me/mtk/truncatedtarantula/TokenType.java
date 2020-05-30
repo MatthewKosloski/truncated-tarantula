@@ -3,7 +3,7 @@ package me.mtk.truncatedtarantula;
 enum TokenType 
 {
     // Grouping tokens
-    LPAREN, RPAREN, LBRACKET, RBRACKET,
+    LPAREN, RPAREN, LBRACKET, RBRACKET, DQUOTE,
 
     // Binary arithmetic tokens
     PLUS, MINUS, STAR, SLASH, SLASHSLASH, PERCENT,
@@ -11,8 +11,8 @@ enum TokenType
     // Unary logical negation operator
     NOT,
 
-    // Literal token
-    NUMBER,
+    // Literals
+    NUMBER, STRING, TRUE, FALSE, IDENTIFIER, NULL,
 
     // Unidentified token,
     UNIDENTIFIED,
@@ -41,15 +41,6 @@ enum TokenType
     // < and <= operators
     LESS_THAN, LESS_THAN_OR_EQUAL_TO,
 
-    // Booleans
-    TRUE, FALSE,
-
-    // Null
-    NULL,
-
-    // Identifier (e.g., variable name)
-    IDENTIFIER,
-    
     // End of file token
     EOF
 }

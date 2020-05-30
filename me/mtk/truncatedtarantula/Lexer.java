@@ -159,6 +159,16 @@ public class Lexer
             case ')': addToken(TokenType.RPAREN); break;
             case '[': addToken(TokenType.LBRACKET); break;
             case ']': addToken(TokenType.RBRACKET); break;
+            // case '"': 
+                // if (tokens.size() > 0 && getSecondToLastToken().type != TokenType.STRING && getLastToken().type == TokenType.DQUOTE)
+                // {
+                //     // empty string
+                //     System.out.println("empty string");
+                //     tokens.add(new Token(TokenType.STRING, "", "", currentLineNumber, currentColumnNumber));
+                // }
+                // addToken(TokenType.DQUOTE); 
+            // break;
+            case '"': string(); break;
 
             // Binary arithmetic operators
             case '+': addToken(TokenType.PLUS); break;
@@ -197,30 +207,90 @@ public class Lexer
                 else 
                     // division operator
                     addToken(TokenType.SLASH);
-                break;
+            break;
             
             case '`':
                 if (match('`')) consumeBlockComment(); break;
 
             default:
-                if (isDigit(currentChar))
+                if (getLastToken().type == TokenType.DQUOTE)
+                    string();
+                else if (isDigit(currentChar))
                     number();
-                else if (isWhitespace(currentChar))
-                {
-                    // Ignore whitespace
-                }
                 else if (isStartOfIdentifier(currentChar))
-                {
                     identifier();
-                }
-                else
-                {
+                else if (!isWhitespace(currentChar))
                     addToken(TokenType.UNIDENTIFIED);
-                }
+
                 break;
         }
     }
 
+    /*
+     * Returns the most recent token that was added to the list.
+     * @param Token the most recently added token.
+     */
+    private Token getLastToken()
+    {
+        if (tokens.size() == 0)
+            return tokens.get(0);
+        else
+            return tokens.get(tokens.size() - 1);
+    }
+
+    /*
+     * Returns the second most recent token that was added to the list.
+     * @param Token the second most recently added token.
+     */
+    private Token getSecondToLastToken()
+    {
+        if (tokens.size() == 0)
+            return tokens.get(0);
+        else
+            return tokens.get(tokens.size() - 2);
+    }
+
+    /*
+     * Handles the scanning of strings.
+     *  
+     * @throws LexicalError if an unterminated string is encountered.
+     */
+    private void string()
+    {
+        // Cache line and column of first char of string
+        int startLine = currentLineNumber;
+        int startColumn = currentColumnNumber;
+
+        while (peek() != '"' && !isEndOfFile()) nextChar();
+
+        String str = source.substring(lexemeStart, position + 1);
+        
+        // remove quotes
+        str = str.substring(1, str.length() - 1);
+
+        Token strToken = new Token(TokenType.STRING, str, str, startLine, 
+            startColumn);
+        tokens.add(strToken);
+
+        if (isEndOfFile())
+        {
+            // The opening quote of the unterminated string
+            Token beginQuote = getSecondToLastToken();
+
+            throw new LexicalError(beginQuote, String.format("Unterminated " + 
+                "string starting at ln %d, col %d", beginQuote.line, 
+                beginQuote.column));
+        }
+
+        // consume "
+        nextChar();
+    }
+
+    /*
+     * Handles the scanning of identifiers. If the identifier is a keyword, 
+     * then a token with the type of that keyword is added to the token list. 
+     * If the identifier is not a keyword, then an IDENTIFIER token is added.
+     */
     private void identifier()
     {
         // Cache the column number
@@ -407,11 +477,16 @@ public class Lexer
      * provided type.
      * 
      * @param type The type of the token
+     * @returns The Token that was recently added
      */
-    private void addToken(TokenType type)
+    private Token addToken(TokenType type)
     {
-        tokens.add(new Token(type, getLexeme(), null, 
-            currentLineNumber, currentColumnNumber));
+        Token token = new Token(type, getLexeme(), null, currentLineNumber,
+            currentColumnNumber); 
+        
+        tokens.add(token);
+        
+        return token;
     }
 
     /*
@@ -421,11 +496,16 @@ public class Lexer
      * @param type The type of the token
      * @param column The column number on the current line
      * where the token occurs
+     * @returns The Token that was recently added
      */
-    private void addToken(TokenType type, int column)
+    private Token addToken(TokenType type, int column)
     {
-        tokens.add(new Token(type, getLexeme(), null, 
-            currentLineNumber, column));
+        Token token = new Token(type, getLexeme(), null, currentLineNumber,
+            column);
+        
+        tokens.add(token);
+
+        return token;
     }
 
     /*
@@ -437,11 +517,16 @@ public class Lexer
      * for quick evaluation)
      * @param column The column number on the current line
      * where the token occurs
+     * @returns The Token that was recently added
      */
-    private void addToken(TokenType type, Object literal, int column)
+    private Token addToken(TokenType type, Object literal, int column)
     {
-        tokens.add(new Token(type, getLexeme(), literal, 
-            currentLineNumber, column));
+        Token token = new Token(type, getLexeme(), literal, currentLineNumber,
+            column);
+        
+        tokens.add(token);
+
+        return token;
     }
 
     /*

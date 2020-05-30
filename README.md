@@ -57,7 +57,8 @@ clause                -> "(" expression body ")" ;
 
 logical               -> "(" ("and" | "or") expression expression+ ")" ;
 
-literal               -> number | identifier 
+literal               -> string | number 
+                      | identifier 
                       | boolean 
                       | "null" ;
 

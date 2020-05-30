@@ -401,10 +401,21 @@ public class Parser
         return literal();
     }
 
-    // literal -> number | identifier | boolean | "null" ;
+    // literal -> string | number | identifier | boolean | "null" ;
     private Expr literal()
     {
-        if (match(TokenType.NUMBER))
+        if (match(TokenType.DQUOTE))
+        {
+            // literal -> string
+
+            Token str = nextToken();
+            
+            // Consume closing "
+            nextToken();
+
+            return new Expr.Literal(str.literal);
+        }
+        else if (match(TokenType.NUMBER))
             // literal -> number ;
             return new Expr.Literal(previous().literal);
         else if (match(TokenType.IDENTIFIER))
@@ -440,7 +451,8 @@ public class Parser
         throw new ParseError(peek(), String.format("Expected one of the " +
             "following but got '%s' instead:\n * An expression starting " + 
             "with '('\n * A unary expression starting with '+' or '-'\n * " + 
-            "Number\n * Identifier\n * Boolean \n * null", peek().lexeme));
+            "String\n * Number\n * Identifier\n * Boolean \n * null", 
+            peek().lexeme));
     }
 
     /*
@@ -605,7 +617,8 @@ public class Parser
             TokenType.LPAREN, TokenType.NUMBER, 
             TokenType.MINUS, TokenType.PLUS, 
             TokenType.TRUE, TokenType.FALSE,
-            TokenType.NULL, TokenType.IDENTIFIER
+            TokenType.NULL, TokenType.IDENTIFIER,
+            TokenType.DQUOTE
         );
     }
 

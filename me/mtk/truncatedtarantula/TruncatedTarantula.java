@@ -61,8 +61,20 @@ public class TruncatedTarantula
      */
     private static void run(String source)
     {
-        Lexer lexer = new Lexer(source);
-        List<Token> tokens = lexer.getTokens();
+        Lexer lexer = null;
+        List<Token> tokens = null;
+
+        try
+        {
+            lexer = new Lexer(source);
+            tokens = lexer.getTokens();
+        }
+        catch (LexicalError err)
+        {
+            displayErrorMessage(err, null);
+            hadError = true;
+            return;
+        }
 
         try
         {
@@ -144,19 +156,22 @@ public class TruncatedTarantula
                 columnNumber, errorName, message);
         }
 
-        int offset = countLeadingWhitespace(line);
+        if (line != null)
+        {
+            int offset = countLeadingWhitespace(line);
 
-        // Print out line of code with the error
-        System.out.format("\nLn %d, Col %d>\n", lineNumber, columnNumber);
-        System.out.format("\t\"%s\"\n", line.trim());
-        
-        // Underline part of the line with the error
-        String underline = "";
-        for (int i = 0; i < columnNumber - offset; i++) underline += " ";
-        
-        for (int i = columnNumber; i < columnNumber + token.lexeme.length(); i++)
-            underline += "^";
-        System.out.format("\t%s\n", underline);
+            // Print out line of code with the error
+            System.out.format("\nLn %d, Col %d>\n", lineNumber, columnNumber);
+            System.out.format("\t\"%s\"\n", line.trim());
+            
+            // Underline part of the line with the error
+            String underline = "";
+            for (int i = 0; i < columnNumber - offset; i++) underline += " ";
+            
+            for (int i = columnNumber; i < columnNumber + token.lexeme.length(); i++)
+                underline += "^";
+            System.out.format("\t%s\n", underline);
+        }
     }
 
     /*
