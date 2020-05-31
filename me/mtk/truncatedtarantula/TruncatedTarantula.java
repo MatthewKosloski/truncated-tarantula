@@ -36,7 +36,7 @@ public class TruncatedTarantula
     {
         if (args.length > 1) 
         {
-            System.out.println("Usage: covertchameleon [script]");
+            System.out.println("Usage: truncatedtarantula [script]");
             System.exit(64);
         }
         else if (args.length == 1)
@@ -71,7 +71,7 @@ public class TruncatedTarantula
         }
         catch (LexicalError err)
         {
-            displayErrorMessage(err, null);
+            reportError(err, err.line, err.column);
             hadError = true;
             return;
         }
@@ -86,13 +86,13 @@ public class TruncatedTarantula
         catch (ParseError err)
         {
             String line = lexer.getLine(err.getToken().line);
-            displayErrorMessage(err, line);
+            reportAndShowError(err, line);
             hadError = true;
         }
         catch (RuntimeError err)
         {
             String line = lexer.getLine(err.getToken().line);
-            displayErrorMessage(err, line);
+            reportAndShowError(err, line);
             hadRuntimeError = true;
         }
     }
@@ -137,41 +137,55 @@ public class TruncatedTarantula
         }
     }
 
-    private static void displayErrorMessage(InterpreterError err, String line)
+    /*
+     * Reports an error to the standard error stream and 
+     * shows the user the line at which the error is located.
+     * 
+     * @param err The type of error.
+     * @param line The line 
+     */
+    private static void reportAndShowError(InterpreterError err, String line)
     {
         Token token = err.getToken();
-        String errorName = err.getErrorName();
-        String message = err.getMessage();
         int lineNumber = token.line;
         int columnNumber = token.column;
 
+        reportError(err, lineNumber, columnNumber);
+
+        int offset = countLeadingWhitespace(line);
+
+        // Print out line of code with the error
+        System.out.format("\nLn %d, Col %d:\n", lineNumber, columnNumber);
+        System.out.format("\t\"%s\"\n", line.trim());
+        
+        // Underline part of the line with the error
+        String underline = "";
+        for (int i = 0; i < columnNumber - offset; i++) underline += " ";
+        
+        for (int i = columnNumber; i < columnNumber + token.lexeme.length(); i++)
+            underline += "^";
+        System.out.format("\t%s\n", underline);
+    }
+
+    /*
+     * Reports an error to the standard error stream.
+     * 
+     * @param err The type of error.
+     * @param lineNumber lineNumber The line number of the error.
+     * @param colNumber colNumber The column number of the error.
+     */
+    private static void reportError(InterpreterError err, int lineNumber,
+        int colNumber)
+    {
+        String errorName = err.getErrorName();
+        String message = err.getMessage();
+        
         if (isInteractive)
-        {
-            System.err.format("%s on column %d: %s\n", errorName, 
-                columnNumber, message);
-        }
+            System.err.format("%s on column %d: %s\n", errorName, colNumber, 
+            message);
         else
-        {
-            System.err.format("%s:%d:%d: %s: %s\n", filename, lineNumber, 
-                columnNumber, errorName, message);
-        }
-
-        if (line != null)
-        {
-            int offset = countLeadingWhitespace(line);
-
-            // Print out line of code with the error
-            System.out.format("\nLn %d, Col %d>\n", lineNumber, columnNumber);
-            System.out.format("\t\"%s\"\n", line.trim());
-            
-            // Underline part of the line with the error
-            String underline = "";
-            for (int i = 0; i < columnNumber - offset; i++) underline += " ";
-            
-            for (int i = columnNumber; i < columnNumber + token.lexeme.length(); i++)
-                underline += "^";
-            System.out.format("\t%s\n", underline);
-        }
+            System.err.format("%s [Ln %d, Col %d]: %s: %s\n", filename, 
+            lineNumber, colNumber, errorName, message);
     }
 
     /*

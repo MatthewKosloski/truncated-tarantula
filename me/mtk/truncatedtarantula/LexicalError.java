@@ -2,9 +2,15 @@ package me.mtk.truncatedtarantula;
 
 public class LexicalError extends InterpreterError
 {
-    public LexicalError(Token token, String msg)
+
+    final int line;
+    final int column;
+
+    public LexicalError(String msg, int line, int column)
     {
-        super(token, msg);
+        super(null, msg);
+        this.line = line;
+        this.column = column;
     }
 
     @Override
