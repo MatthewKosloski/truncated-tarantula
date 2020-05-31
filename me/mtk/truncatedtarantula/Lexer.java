@@ -230,18 +230,6 @@ public class Lexer
     }
 
     /*
-     * Returns the second most recent token that was added to the list.
-     * @param Token the second most recently added token.
-     */
-    private Token getSecondToLastToken()
-    {
-        if (tokens.size() == 0)
-            return tokens.get(0);
-        else
-            return tokens.get(tokens.size() - 2);
-    }
-
-    /*
      * Handles the scanning of strings.
      *  
      * @throws LexicalError if an unterminated string is encountered.
@@ -254,24 +242,18 @@ public class Lexer
 
         while (peek() != '"' && !isEndOfFile()) nextChar();
 
+        if (isEndOfFile())
+            throw new LexicalError("Unterminated string", startLine,
+            startColumn);
+
         String str = source.substring(lexemeStart, position + 1);
         
-        // remove quotes
+        // remove double quotes surrounding string
         str = str.substring(1, str.length() - 1);
 
         Token strToken = new Token(TokenType.STRING, str, str, startLine, 
             startColumn);
         tokens.add(strToken);
-
-        if (isEndOfFile())
-        {
-            // The opening quote of the unterminated string
-            Token beginQuote = getSecondToLastToken();
-
-            throw new LexicalError(beginQuote, String.format("Unterminated " + 
-                "string starting at ln %d, col %d", beginQuote.line, 
-                beginQuote.column));
-        }
 
         // consume "
         nextChar();

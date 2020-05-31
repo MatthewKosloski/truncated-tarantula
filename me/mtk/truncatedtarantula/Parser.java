@@ -257,7 +257,8 @@ public class Parser
         while (peekExpr() && hasTokens())
             exprs.add(expression());
         
-        return new Expr.Body(exprs);
+
+            return new Expr.Body(exprs);
     }
 
     // print -> "(" ("print" | "println") equality+ ")" ;
@@ -404,19 +405,8 @@ public class Parser
     // literal -> string | number | identifier | boolean | "null" ;
     private Expr literal()
     {
-        if (match(TokenType.DQUOTE))
-        {
-            // literal -> string
-
-            Token str = nextToken();
-            
-            // Consume closing "
-            nextToken();
-
-            return new Expr.Literal(str.literal);
-        }
-        else if (match(TokenType.NUMBER))
-            // literal -> number ;
+        if (match(TokenType.STRING, TokenType.NUMBER))
+            // literal -> string | number ;
             return new Expr.Literal(previous().literal);
         else if (match(TokenType.IDENTIFIER))
             // literal -> identifier ;
@@ -618,7 +608,7 @@ public class Parser
             TokenType.MINUS, TokenType.PLUS, 
             TokenType.TRUE, TokenType.FALSE,
             TokenType.NULL, TokenType.IDENTIFIER,
-            TokenType.DQUOTE
+            TokenType.STRING
         );
     }
 
