@@ -213,23 +213,90 @@ public class Interpreter implements Expr.Visitor<Object>
  
             // >, >=, <, <= operators
             // These operators only work on number and string types.
-            // TODO: Compare strings lexicographically
             case GREATER_THAN:
-                validateNumberOperands(operator, first, second);
-                return (double) first > (double) second;
+                if (first instanceof Double && second instanceof Double)
+                    return (double) first > (double) second;
+                else if (first instanceof String && second instanceof String)
+                    return gt((String) first, (String) second);
+                else
+                    throwInvalidOperandsError(operator, new String[] {"number",
+                        "string"}, new String[] {typeof(first), typeof(second)});
             case GREATER_THAN_OR_EQUAL_TO:
-                validateNumberOperands(operator, first, second);
-                return (double) first >= (double) second;
+                if (first instanceof Double && second instanceof Double)
+                    return (double) first >= (double) second;
+                else if (first instanceof String && second instanceof String)
+                    return gte((String) first, (String) second);
+                else
+                    throw new RuntimeError(operator, String.format("Operands " +
+                    "to operator '%s' must be either numbers or strings", 
+                    operator.lexeme));
             case LESS_THAN:
-                validateNumberOperands(operator, first, second);
-                return (double) first < (double) second;
+                if (first instanceof Double && second instanceof Double)
+                    return (double) first < (double) second;
+                else if (first instanceof String && second instanceof String)
+                    return lt((String) first, (String) second);
+                else
+                    throw new RuntimeError(operator, String.format("Operands " +
+                    "to operator '%s' must be either numbers or strings", 
+                    operator.lexeme));
             case LESS_THAN_OR_EQUAL_TO:
-                validateNumberOperands(operator, first, second);
-                return (double) first <= (double) second;
-
+                if (first instanceof Double && second instanceof Double)
+                    return (double) first < (double) second;
+                else if (first instanceof String && second instanceof String)
+                    return lte((String) first, (String) second);
+                else
+                    throw new RuntimeError(operator, String.format("Operands " +
+                    "to operator '%s' must be either numbers or strings", 
+                    operator.lexeme));
         }
 
         return null;
+    }
+
+    private void throwInvalidOperandsError(Token operator, String[] expected, 
+        String[] actual)
+    {
+        String msg = String.format("Expected the operands to operator '%s' to be of type ", 
+            operator.lexeme);
+        for(int i = 0; i < expected.length; i++)
+            msg += "'" + expected[i] + "'" + (i == expected.length - 1 ? "" : " or ");
+        msg += " but got ";
+        for(int i = 0; i < actual.length; i++)
+            msg += "'" + actual[i] + "'" + (i == actual.length - 1 ? "" : " and ");
+        msg += " instead";
+
+        throw new RuntimeError(operator, msg);
+    }
+
+    private String typeof(Object a)
+    {
+        if (a instanceof String)
+            return "string";
+        else if (a instanceof Double)
+            return "number";
+        else if (a instanceof Boolean)
+            return "boolean";
+        else
+            return "null";
+    }
+
+    private boolean gt(String a, String b) {
+        return a.compareTo(b) > 0;
+    }
+
+    private boolean gte(String a, String b)
+    {
+        return a.compareTo(b) >= 0;
+    }
+
+    private boolean lt(String a, String b)
+    {
+        return a.compareTo(b) < 0;
+    }
+
+    private boolean lte(String a, String b)
+    {
+        return a.compareTo(b) <= 0;
     }
 
     @Override
