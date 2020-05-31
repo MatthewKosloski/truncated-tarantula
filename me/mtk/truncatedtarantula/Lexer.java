@@ -159,15 +159,6 @@ public class Lexer
             case ')': addToken(TokenType.RPAREN); break;
             case '[': addToken(TokenType.LBRACKET); break;
             case ']': addToken(TokenType.RBRACKET); break;
-            // case '"': 
-                // if (tokens.size() > 0 && getSecondToLastToken().type != TokenType.STRING && getLastToken().type == TokenType.DQUOTE)
-                // {
-                //     // empty string
-                //     System.out.println("empty string");
-                //     tokens.add(new Token(TokenType.STRING, "", "", currentLineNumber, currentColumnNumber));
-                // }
-                // addToken(TokenType.DQUOTE); 
-            // break;
             case '"': string(); break;
 
             // Binary arithmetic operators
