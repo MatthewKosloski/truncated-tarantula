@@ -10,7 +10,7 @@ Truncated Tarantula is the third iteration of the Torrey interpreter, a continua
 
 The following functionality will be implemented in this iteration:
 
-- [ x ] Strings
+- [ X ] Strings
 - [ ] Functions
 - [ ] `lambda` expressions
 - [ ] An array-like data structure
