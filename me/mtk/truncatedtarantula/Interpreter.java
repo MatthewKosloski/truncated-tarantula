@@ -268,13 +268,19 @@ public class Interpreter implements Expr.Visitor<Object>
         throw new RuntimeError(operator, msg);
     }
 
-    private String typeof(Object a)
+    /*
+     * Returns the type of the provided operand.
+     * 
+     * @param operand An operand to an expression.
+     * @return The type of the provided operand as a string.
+     */
+    private String typeof(Object operand)
     {
-        if (a instanceof String)
+        if (operand instanceof String)
             return "string";
-        else if (a instanceof Double)
+        else if (operand instanceof Double)
             return "number";
-        else if (a instanceof Boolean)
+        else if (operand instanceof Boolean)
             return "boolean";
         else
             return "null";
