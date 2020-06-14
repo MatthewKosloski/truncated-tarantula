@@ -17,7 +17,7 @@ The following functionality will be implemented in this iteration:
 - [ ] Native `map`, `filter`, and `reduce` functions
 - [ ] Standard input API
 - [ ] Command-line arguments
-- [ ] Native `typeof` unary operator
+- [x] Native `typeof` unary operator
 
 
 ## Grammar
@@ -39,7 +39,7 @@ expression            -> equality
 equality              -> "(" ("equal?" | "nequal?") comparison comparison+ ")" ;
 comparison            -> "(" ( ">" | ">=" | "<" | "<=" ) binary binary+ ")" ; 
 binary                -> "(" ("+" | "-" | "*" | "/" | "//" | "%") unary unary+ ")" ;
-unary                 -> ("+" | "-" | "not" | "true?") expression | literal ;
+unary                 -> ("+" | "-" | "not" | "true?" | "typeof") expression | literal ;
 
 let                   -> "(" "let" bindings body ")" ;
 bindings              -> "[" binding+ "]" ;
@@ -343,4 +343,40 @@ _Note: The `print` expressions and the `true?` predicate ought to be removed in 
 ;;=> 100
 (println (or false null 0))
 ;;=> 0
+
+;; The `typeof` unary operator can be used
+;; to check the type of an expression.
+
+(println 
+    (typeof null)
+    (typeof true)
+    (typeof false)
+    (typeof "")
+    (typeof " ")
+    (typeof "null")
+    (typeof "true")
+    (typeof "false")
+    (typeof "-1")
+    (typeof -1)
+    (typeof 0)
+    (typeof 1)
+    (typeof 1.1))
+;;=>null
+;;=>boolean
+;;=>boolean
+;;=>string
+;;=>string
+;;=>string
+;;=>string
+;;=>string
+;;=>string
+;;=>number
+;;=>number
+;;=>number
+
+;; The typeof operator returns a string:
+
+(println
+    (typeof (typeof null)))
+;;=>string
 ```

@@ -420,6 +420,8 @@ public class Interpreter implements Expr.Visitor<Object>
                 return !isTruthy(right);
             case TRUE_PREDICATE:
                 return isTruthy(right);
+            case TYPEOF:
+                return typeof(right);
             default:
                 validateNumberOperand(operator, right);
                 return (double) right;

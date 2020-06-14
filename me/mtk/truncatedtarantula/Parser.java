@@ -364,7 +364,7 @@ public class Parser
 
      /*
      * Implements the following production rule:
-     * unary -> ("+" | "-" | "not")? expression | literal ;
+     * unary -> ("+" | "-" | "not" | "true?" | "typeof") expression | literal ;
      *
      * @return A unary expression.
      */
@@ -381,7 +381,7 @@ public class Parser
             return new Expr.Unary(operator, right);
         }
         else if (peek(TokenType.LPAREN) && peekNext(TokenType.NOT, 
-            TokenType.TRUE_PREDICATE))
+            TokenType.TRUE_PREDICATE, TokenType.TYPEOF))
         {
             // Consume (
             nextToken();

@@ -11,6 +11,9 @@ enum TokenType
     // Unary logical negation operator
     NOT,
 
+    // Unary typeof operator
+    TYPEOF,
+
     // Literals
     NUMBER, STRING, TRUE, FALSE, IDENTIFIER, NULL,
 
