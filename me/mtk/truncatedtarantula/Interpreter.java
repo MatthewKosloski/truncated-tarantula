@@ -286,20 +286,52 @@ public class Interpreter implements Expr.Visitor<Object>
             return "null";
     }
 
+    /*
+     * Indicates if operand a is lexicographically greater than operand b.
+     * 
+     * @param a The first operand.
+     * @param b The second operand.
+     * @return True if a is lexicographically greater than b; False otherwise.
+     */
     private boolean gt(String a, String b) {
         return a.compareTo(b) > 0;
     }
 
+    /*
+     * Indicates if operand a is lexicographically greater than or equal 
+     * to operand b.
+     * 
+     * @param a The first operand.
+     * @param b The second operand.
+     * @return True if a is lexicographically greater than or equal to b; 
+     * False otherwise.
+     */
     private boolean gte(String a, String b)
     {
         return a.compareTo(b) >= 0;
     }
 
+    /*
+     * Indicates if operand a is lexicographically less than operand b.
+     * 
+     * @param a The first operand.
+     * @param b The second operand.
+     * @return True if a is lexicographically less than b; False otherwise.
+     */
     private boolean lt(String a, String b)
     {
         return a.compareTo(b) < 0;
     }
 
+    /*
+     * Indicates if operand a is lexicographically greater than or equal 
+     * to operand b.
+     * 
+     * @param a The first operand.
+     * @param b The second operand.
+     * @return True if a is lexicographically greater than or equal to b; 
+     * False otherwise.
+     */
     private boolean lte(String a, String b)
     {
         return a.compareTo(b) <= 0;
