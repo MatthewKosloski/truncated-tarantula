@@ -9,6 +9,26 @@ import java.util.List;
 public class Interpreter implements Expr.Visitor<Object>
 {
 
+    private enum Type
+    {
+        STRING("string"),
+        NUMBER("number"),
+        BOOLEAN("boolean"),
+        NULL("null");
+
+        private String type;
+
+        Type(String type)
+        {
+            this.type = type;
+        }
+
+        String getTypeString()
+        {
+            return this.type;
+        }
+    }
+
     private Scope scope = new Scope(null);
 
     /**
@@ -277,13 +297,27 @@ public class Interpreter implements Expr.Visitor<Object>
     private String typeof(Object obj)
     {
         if (obj instanceof String)
-            return "string";
+            return Type.STRING.getTypeString();
         else if (obj instanceof Double)
-            return "number";
+            return Type.NUMBER.getTypeString();
         else if (obj instanceof Boolean)
-            return "boolean";
+            return Type.BOOLEAN.getTypeString();
         else
-            return "null";
+            return Type.NULL.getTypeString();
+    }
+
+    /*
+     * Indicates if every provided object in objs is of the provided type.
+     * 
+     * @param type The type that is being checked.
+     * @return True if every object is of the provided type; False otherwise.
+     */
+    private boolean isType(Type type, Object... objs)
+    {
+        for (Object obj : objs)
+            if (typeof(obj) != type.getTypeString()) return false;
+
+        return true;
     }
 
     /*
@@ -295,10 +329,7 @@ public class Interpreter implements Expr.Visitor<Object>
      */
     private boolean isString(Object... objs)
     {
-        for (Object obj : objs)
-            if (typeof(obj) != "string") return false;
-
-        return true;
+        return isType(Type.STRING, objs);
     }
 
     /*
@@ -310,10 +341,7 @@ public class Interpreter implements Expr.Visitor<Object>
      */
     private boolean isNumber(Object... objs)
     {
-        for (Object obj : objs)
-            if (typeof(obj) != "number") return false;
-
-        return true;
+        return isType(Type.NUMBER, objs);
     }
 
     /*
