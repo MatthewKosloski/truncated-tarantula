@@ -241,7 +241,7 @@ public class Interpreter implements Expr.Visitor<Object>
                     operator.lexeme));
             case LESS_THAN_OR_EQUAL_TO:
                 if (isNumber(first, second))
-                    return (double) first < (double) second;
+                    return (double) first <= (double) second;
                 else if (isString(first, second))
                     return lte((String) first, (String) second);
                 else
