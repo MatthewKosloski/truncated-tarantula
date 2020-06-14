@@ -242,51 +242,58 @@ public class Interpreter implements Expr.Visitor<Object>
                     return gt((String) first, (String) second);
                 else
                     throwInvalidOperandsError(operator, new String[] {"number",
-                        "string"}, new String[] {typeof(first), typeof(second)});
+                        "string"}, typeof(first), typeof(second));
             case GREATER_THAN_OR_EQUAL_TO:
                 if (isNumber(first, second))
                     return (double) first >= (double) second;
                 else if (isString(first, second))
                     return gte((String) first, (String) second);
                 else
-                    throw new RuntimeError(operator, String.format("Operands " +
-                    "to operator '%s' must be either numbers or strings", 
-                    operator.lexeme));
+                    throwInvalidOperandsError(operator, new String[] {"number",
+                        "string"}, typeof(first), typeof(second));  
             case LESS_THAN:
                 if (isNumber(first, second))
                     return (double) first < (double) second;
                 else if (isString(first, second))
                     return lt((String) first, (String) second);
                 else
-                    throw new RuntimeError(operator, String.format("Operands " +
-                    "to operator '%s' must be either numbers or strings", 
-                    operator.lexeme));
+                    throwInvalidOperandsError(operator, new String[] {"number",
+                        "string"}, typeof(first), typeof(second));
             case LESS_THAN_OR_EQUAL_TO:
                 if (isNumber(first, second))
                     return (double) first <= (double) second;
                 else if (isString(first, second))
                     return lte((String) first, (String) second);
                 else
-                    throw new RuntimeError(operator, String.format("Operands " +
-                    "to operator '%s' must be either numbers or strings", 
-                    operator.lexeme));
+                    throwInvalidOperandsError(operator, new String[] {"number",
+                        "string"}, typeof(first), typeof(second));
         }
 
         return null;
     }
 
+    /*
+     * Throws a RuntimeError indicating that the types of the binary operator's
+     * operands are invalid.
+     * 
+     * @param operator The token of a binary operator.
+     * @param expected An array of strings, where each string is the string
+     * representation of a type the two operands can take on.
+     * @param actualFirst The string representation of the type of the first operand.
+     * @param actualSecond The string representation of the type of the second operand.
+     * @throws RuntimeError Indicating that the binary operator received invalid operands.
+     */
     private void throwInvalidOperandsError(Token operator, String[] expected, 
-        String[] actual)
+        String actualFirst, String actualSecond)
     {
         String msg = String.format("Expected the operands to operator '%s' to be of type ", 
             operator.lexeme);
+        
+        // list expected types
         for(int i = 0; i < expected.length; i++)
             msg += "'" + expected[i] + "'" + (i == expected.length - 1 ? "" : " or ");
-        msg += " but got ";
-        for(int i = 0; i < actual.length; i++)
-            msg += "'" + actual[i] + "'" + (i == actual.length - 1 ? "" : " and ");
-        msg += " instead";
 
+        msg += String.format(" but got '%s' and '%s' instead", actualFirst, actualSecond);
         throw new RuntimeError(operator, msg);
     }
 
