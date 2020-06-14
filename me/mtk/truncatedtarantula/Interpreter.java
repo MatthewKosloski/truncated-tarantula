@@ -9,6 +9,7 @@ import java.util.List;
 public class Interpreter implements Expr.Visitor<Object>
 {
 
+    // Holds all the data types as strings.
     private enum Type
     {
         STRING("string"),
@@ -29,6 +30,7 @@ public class Interpreter implements Expr.Visitor<Object>
         }
     }
 
+    // The global environment/scope of the program.
     private Scope scope = new Scope(null);
 
     /**
