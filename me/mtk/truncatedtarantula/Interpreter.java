@@ -214,35 +214,35 @@ public class Interpreter implements Expr.Visitor<Object>
             // >, >=, <, <= operators
             // These operators only work on number and string types.
             case GREATER_THAN:
-                if (first instanceof Double && second instanceof Double)
+                if (isNumber(first, second))
                     return (double) first > (double) second;
-                else if (first instanceof String && second instanceof String)
+                else if (isString(first, second))
                     return gt((String) first, (String) second);
                 else
                     throwInvalidOperandsError(operator, new String[] {"number",
                         "string"}, new String[] {typeof(first), typeof(second)});
             case GREATER_THAN_OR_EQUAL_TO:
-                if (first instanceof Double && second instanceof Double)
+                if (isNumber(first, second))
                     return (double) first >= (double) second;
-                else if (first instanceof String && second instanceof String)
+                else if (isString(first, second))
                     return gte((String) first, (String) second);
                 else
                     throw new RuntimeError(operator, String.format("Operands " +
                     "to operator '%s' must be either numbers or strings", 
                     operator.lexeme));
             case LESS_THAN:
-                if (first instanceof Double && second instanceof Double)
+                if (isNumber(first, second))
                     return (double) first < (double) second;
-                else if (first instanceof String && second instanceof String)
+                else if (isString(first, second))
                     return lt((String) first, (String) second);
                 else
                     throw new RuntimeError(operator, String.format("Operands " +
                     "to operator '%s' must be either numbers or strings", 
                     operator.lexeme));
             case LESS_THAN_OR_EQUAL_TO:
-                if (first instanceof Double && second instanceof Double)
+                if (isNumber(first, second))
                     return (double) first < (double) second;
-                else if (first instanceof String && second instanceof String)
+                else if (isString(first, second))
                     return lte((String) first, (String) second);
                 else
                     throw new RuntimeError(operator, String.format("Operands " +
@@ -269,21 +269,51 @@ public class Interpreter implements Expr.Visitor<Object>
     }
 
     /*
-     * Returns the type of the provided operand.
+     * Returns the type of the provided object.
      * 
-     * @param operand An operand to an expression.
-     * @return The type of the provided operand as a string.
+     * @param obj An object.
+     * @return The type of the provided object, returned as a string.
      */
-    private String typeof(Object operand)
+    private String typeof(Object obj)
     {
-        if (operand instanceof String)
+        if (obj instanceof String)
             return "string";
-        else if (operand instanceof Double)
+        else if (obj instanceof Double)
             return "number";
-        else if (operand instanceof Boolean)
+        else if (obj instanceof Boolean)
             return "boolean";
         else
             return "null";
+    }
+
+    /*
+     * Indicates if every provided object is a string.
+     * 
+     * @param objs One or more objects.
+     * @return True if every object is a string; False if at least one
+     * of the provided objects is not a string.
+     */
+    private boolean isString(Object... objs)
+    {
+        for (Object obj : objs)
+            if (typeof(obj) != "string") return false;
+
+        return true;
+    }
+
+    /*
+     * Indicates if every provided object is a number.
+     * 
+     * @param objs One or more objects.
+     * @return True if every object is a number; False if at least one
+     * of the provided objects is not a number.
+     */
+    private boolean isNumber(Object... objs)
+    {
+        for (Object obj : objs)
+            if (typeof(obj) != "number") return false;
+
+        return true;
     }
 
     /*
